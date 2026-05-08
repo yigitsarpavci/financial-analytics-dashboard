@@ -17,6 +17,9 @@ export const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
   const response = await fetch(`${API_URL}/api/v1${endpoint}`, { ...defaultOptions, ...options });
 
   if (!response.ok) {
+    if (response.status === 401 || response.status === 403 || response.status === 404) {
+      throw new Error("Unauthorized");
+    }
     throw new Error(`API error: ${response.statusText}`);
   }
 

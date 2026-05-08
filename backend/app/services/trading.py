@@ -76,7 +76,8 @@ def _match_order(db: Session, order: Order):
         )
         db.add(trade)
         
-        # Commit partial fill or full fill iteration
+    # Commit all fills and trades in a single transaction after the matching loop completes
+    if order.filled_quantity > 0:
         db.commit()
         db.refresh(order)
 

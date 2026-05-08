@@ -35,11 +35,11 @@ class User(Base):
 class Transaction(Base):
     __tablename__ = "transactions"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     amount = Column(Float, nullable=False)
-    type = Column(Enum(TransactionType), nullable=False)
-    category = Column(String, nullable=False)
-    date = Column(DateTime(timezone=True), server_default=func.now())
+    type = Column(Enum(TransactionType), index=True, nullable=False)
+    category = Column(String, index=True, nullable=False)
+    date = Column(DateTime(timezone=True), index=True, server_default=func.now())
     description = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -49,11 +49,11 @@ class Transaction(Base):
 class Budget(Base):
     __tablename__ = "budgets"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     category = Column(String, nullable=False)
     target_amount = Column(Float, nullable=False)
-    month = Column(Integer, nullable=False)
-    year = Column(Integer, nullable=False)
+    month = Column(Integer, index=True, nullable=False)
+    year = Column(Integer, index=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -64,14 +64,14 @@ class Asset(Base):
     id = Column(Integer, primary_key=True, index=True)
     ticker_symbol = Column(String, unique=True, index=True, nullable=False)
     name = Column(String, nullable=False)
-    asset_class = Column(String, nullable=False) # e.g., Crypto, Stocks, Bonds
+    asset_class = Column(String, index=True, nullable=False) # e.g., Crypto, Stocks, Bonds
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
 class Portfolio(Base):
     __tablename__ = "portfolios"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     name = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
@@ -83,8 +83,8 @@ class Portfolio(Base):
 class PortfolioHolding(Base):
     __tablename__ = "portfolio_holdings"
     id = Column(Integer, primary_key=True, index=True)
-    portfolio_id = Column(Integer, ForeignKey("portfolios.id"), nullable=False)
-    asset_id = Column(Integer, ForeignKey("assets.id"), nullable=False)
+    portfolio_id = Column(Integer, ForeignKey("portfolios.id"), index=True, nullable=False)
+    asset_id = Column(Integer, ForeignKey("assets.id"), index=True, nullable=False)
     quantity = Column(Float, nullable=False)
     average_buy_price = Column(Float, nullable=False)
     allocation_percentage = Column(Float, nullable=False)
@@ -97,7 +97,7 @@ class PortfolioHolding(Base):
 class RiskAnalysisResult(Base):
     __tablename__ = "risk_analysis_results"
     id = Column(Integer, primary_key=True, index=True)
-    portfolio_id = Column(Integer, ForeignKey("portfolios.id"), nullable=False)
+    portfolio_id = Column(Integer, ForeignKey("portfolios.id"), index=True, nullable=False)
     risk_score = Column(Float, nullable=False)
     risk_profile = Column(String, nullable=False)
     details = Column(Text, nullable=True) # JSON or text details
@@ -108,7 +108,7 @@ class RiskAnalysisResult(Base):
 class AIInsight(Base):
     __tablename__ = "ai_insights"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
     prompt = Column(Text, nullable=True)
     insight = Column(Text, nullable=False)
     generated_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -118,13 +118,13 @@ class AIInsight(Base):
 class Order(Base):
     __tablename__ = "orders"
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-    asset_id = Column(Integer, ForeignKey("assets.id"), nullable=False)
-    side = Column(Enum(OrderSide), nullable=False)
-    price = Column(Float, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id"), index=True, nullable=False)
+    asset_id = Column(Integer, ForeignKey("assets.id"), index=True, nullable=False)
+    side = Column(Enum(OrderSide), index=True, nullable=False)
+    price = Column(Float, index=True, nullable=False)
     quantity = Column(Float, nullable=False)
     filled_quantity = Column(Float, default=0.0, nullable=False)
-    status = Column(Enum(OrderStatus), default=OrderStatus.OPEN, nullable=False)
+    status = Column(Enum(OrderStatus), index=True, default=OrderStatus.OPEN, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
@@ -134,12 +134,12 @@ class Order(Base):
 class Trade(Base):
     __tablename__ = "trades"
     id = Column(Integer, primary_key=True, index=True)
-    buy_order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
-    sell_order_id = Column(Integer, ForeignKey("orders.id"), nullable=False)
-    asset_id = Column(Integer, ForeignKey("assets.id"), nullable=False)
+    buy_order_id = Column(Integer, ForeignKey("orders.id"), index=True, nullable=False)
+    sell_order_id = Column(Integer, ForeignKey("orders.id"), index=True, nullable=False)
+    asset_id = Column(Integer, ForeignKey("assets.id"), index=True, nullable=False)
     price = Column(Float, nullable=False)
     quantity = Column(Float, nullable=False)
-    executed_at = Column(DateTime(timezone=True), server_default=func.now())
+    executed_at = Column(DateTime(timezone=True), index=True, server_default=func.now())
 
     buy_order = relationship("Order", foreign_keys=[buy_order_id])
     sell_order = relationship("Order", foreign_keys=[sell_order_id])
