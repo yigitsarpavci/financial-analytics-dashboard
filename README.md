@@ -217,3 +217,5 @@ Deploy the Next.js UI using Vercel (easiest for Next.js):
 - **Asynchronous Worker Queues:** Offload the synchronous limit order matching engine to a background worker (e.g., Celery/Redis) to prevent HTTP request blocking during massive order influxes.
 - **Next.js Server Actions:** Migrate from standard React API polling to Next.js Server Actions for zero-JS-bundle data mutations.
 - **Advanced Auth Security:** Transition JWT storage from `localStorage` to strict `HttpOnly` cookies to mitigate XSS vulnerabilities.
+- **OAuth2 Authentication:** Add Google/GitHub authentication flows for seamless onboarding.
+- **Advanced Charting:** Introduce advanced charting libraries (e.g., TradingView Lightweight Charts) for interactive candlestick data.
