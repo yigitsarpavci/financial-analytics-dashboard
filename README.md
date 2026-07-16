@@ -32,6 +32,18 @@ In modern fintech, data is often scattered across banking apps, brokerage accoun
 
 ---
 
+
+## Business Value & Target Audience
+
+- **Target Audience:** Retail investors managing their own portfolios, and small brokerages seeking a white-label solution for client-facing risk analytics.
+- **Value Proposition:** Brings institutional-grade portfolio risk analysis (diversification scoring) and a high-performance order matching engine to the retail market, consolidating scattered financial data into a single actionable dashboard.
+
+## Monetization Strategy (SaaS Model)
+
+- **Starter Tier (Free):** Basic portfolio tracking and manual simulated trading.
+- **Pro Tier ($14.99/mo):** Unlimited access to the AI Financial Assistant and real-time portfolio optimization scoring.
+- **Enterprise API:** B2B access to the Limit Order Matching Engine for institutional clients (volume-based pricing).
+
 ## Key Features
 
 - **Personal Finance Dashboard:** Track income vs. expenses, analyze spending via category breakdown charts, and monitor a dynamic "Financial Health Score".
@@ -161,6 +173,17 @@ docker-compose exec backend pytest app/tests/
 
 ---
 
+
+### Environment Variables Configuration
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `DATABASE_URL` | ✅ | PostgreSQL connection string |
+| `SECRET_KEY` | ✅ | JWT signing key (HS256) |
+| `FRONTEND_CORS_ORIGINS` | ✅ | Allowed origins (e.g. Vercel domain) |
+| `OPENAI_API_KEY` | Optional | Required for the AI Financial Assistant |
+| `STRIPE_SECRET_KEY` | Optional | For processing Pro Tier subscriptions |
+
 ## Deployment Guide
 
 This project is structured for deployment to modern cloud platforms.
@@ -188,6 +211,15 @@ Deploy the Next.js UI using Vercel (easiest for Next.js):
   - `NEXT_PUBLIC_API_URL`: Your deployed backend URL + `/api/v1` (e.g., `https://fintech-api.onrender.com/api/v1`).
 
 ---
+
+
+### Production Deployment Checklist
+
+- [ ] **Database:** Provisioned managed PostgreSQL (e.g., Supabase, Neon)
+- [ ] **Backend (FastAPI):** Dockerized and deployed to Render or Fly.io
+- [ ] **Frontend (Next.js):** Deployed to Vercel with App Router optimizations
+- [ ] **Security:** JWT cookies enforced as `HttpOnly`, CORS restricted to production domain
+- [ ] **Environment:** All production API keys and secrets securely injected
 
 ## What I Learned
 
