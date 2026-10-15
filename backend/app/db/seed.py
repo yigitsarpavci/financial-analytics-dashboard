@@ -56,10 +56,11 @@ def seed_users_and_data(db, assets):
     
     total_tx = 0
     
-    for i in range(1, 51):
+    for i in range(0, 51):
         # 1. Create User
+        email = f"test{i}@example.com" if i <= 5 else f"user{i}@example.com"
         user = User(
-            email=f"user{i}@example.com",
+            email=email,
             hashed_password=password_hash,
             created_at=now
         )
