@@ -1,4 +1,4 @@
-# FinTech Intelligence Platform: AI-Powered Personal Finance and Portfolio Risk Dashboard
+# Financial Analytics Dashboard: Personal Finance & Portfolio Risk Platform
 
 [![Backend Pytest](https://github.com/yigitsarpavci/fintech-intelligence-platform/actions/workflows/backend-pytest.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/fintech-intelligence-platform/actions/workflows/backend-pytest.yml)
 [![Frontend Next.js Build](https://github.com/yigitsarpavci/fintech-intelligence-platform/actions/workflows/frontend-build.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/fintech-intelligence-platform/actions/workflows/frontend-build.yml)
