@@ -1,7 +1,7 @@
 # Financial Analytics Dashboard: Personal Finance & Portfolio Risk Platform
 
-[![Backend Pytest](https://github.com/yigitsarpavci/fintech-intelligence-platform/actions/workflows/backend-pytest.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/fintech-intelligence-platform/actions/workflows/backend-pytest.yml)
-[![Frontend Next.js Build](https://github.com/yigitsarpavci/fintech-intelligence-platform/actions/workflows/frontend-build.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/fintech-intelligence-platform/actions/workflows/frontend-build.yml)
+[![Backend Pytest](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/backend-pytest.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/backend-pytest.yml)
+[![Frontend Next.js Build](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/frontend-build.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/frontend-build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 An educational, full-stack financial technology application that integrates personal finance tracking, portfolio risk analysis, an AI-powered financial assistant, and a live trading simulator engine.
