@@ -4,7 +4,7 @@
 [![Frontend Next.js Build](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/frontend-build.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/frontend-build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-An educational, full-stack financial technology application that integrates personal finance tracking, portfolio risk analysis, an AI-powered financial assistant, and a live trading simulator engine.
+An educational, full-stack financial technology application that integrates personal finance tracking, portfolio risk analysis, algorithmic financial health scoring, and an AI-powered financial assistant.
 
 > **Disclaimer:** This project is built strictly for educational and portfolio demonstration purposes. None of the insights, risk profiles, or AI outputs constitute real financial or investment advice.
 
@@ -26,31 +26,30 @@ An educational, full-stack financial technology application that integrates pers
 
 ## Problem Statement
 
-In modern fintech, data is often scattered across banking apps, brokerage accounts, and budgeting tools. Furthermore, sophisticated financial insights (like portfolio concentration risk and diversification scoring) are typically reserved for institutional traders.
+In modern personal finance and wealth management, data is often scattered across banking apps, spreadsheet trackers, and disparate budgeting tools. Furthermore, sophisticated portfolio insights (such as multi-asset concentration risk and weighted diversification scoring) are typically inaccessible in a unified, intuitive interface.
 
-**The FinTech Intelligence Platform** bridges this gap by offering a single, unified dashboard where users can track basic transactions, analyze complex portfolio metrics, receive actionable (educational) AI insights, and test trading strategies against an in-house limit order matching engine.
+**The FinTech Intelligence Platform** bridges this gap by offering a single, unified dashboard where users can track personal transactions, analyze multi-asset portfolio risks, monitor their algorithmic Financial Health Score, and receive actionable educational financial wellness insights powered by AI.
 
 ---
 
-
 ## Business Value & Target Audience
 
-- **Target Audience:** Retail investors managing their own portfolios, and small brokerages seeking a white-label solution for client-facing risk analytics.
-- **Value Proposition:** Brings institutional-grade portfolio risk analysis (diversification scoring) and a high-performance order matching engine to the retail market, consolidating scattered financial data into a single actionable dashboard.
+- **Target Audience:** Individual investors, tech professionals, and households seeking rigorous, data-driven personal financial analytics and automated risk assessment.
+- **Value Proposition:** Combines institutional-grade portfolio risk analysis (diversification scoring), algorithmic financial wellness metrics, and context-aware AI advisory into an intuitive, privacy-conscious full-stack dashboard.
 
 ## Monetization Strategy (SaaS Model)
 
-- **Starter Tier (Free):** Basic portfolio tracking and manual simulated trading.
-- **Pro Tier ($14.99/mo):** Unlimited access to the AI Financial Assistant and real-time portfolio optimization scoring.
-- **Enterprise API:** B2B access to the Limit Order Matching Engine for institutional clients (volume-based pricing).
+- **Starter Tier (Free):** Transaction tracking, expense categorization, and basic portfolio risk analytics.
+- **Pro Tier ($14.99/mo):** Unlimited access to the AI Financial Assistant, deep multi-asset portfolio diversification modeling, and custom budget alerts.
+- **Enterprise API:** B2B licensing of portfolio risk and financial wellness scoring engines for employee benefits and financial planning platforms.
 
 ## Key Features
 
-- **Personal Finance Dashboard:** Track income vs. expenses, analyze spending via category breakdown charts, and monitor a dynamic "Financial Health Score".
-- **Portfolio Risk Analyzer:** A dynamic tool that evaluates asset allocation, largest holding concentration, and calculates a Diversification Score (0-100).
-- **AI Financial Assistant:** Generates personalized, plain-English educational insights based on real user data (spending habits, risk profiles) via OpenAI's LLM (with a robust rule-based fallback).
-- **Limit Order Trading Simulator:** A sophisticated Price-Time Priority order matching engine handling bids/asks, spread calculations, and partial fills.
-- **Secure Authentication:** JWT-based stateless authentication with `bcrypt` password hashing.
+- **Personal Finance Dashboard:** Track income vs. expenses, analyze spending via category breakdown charts (Recharts), and monitor an algorithmic "Financial Health Score" based on savings rate and net cash flow.
+- **Portfolio Risk Analyzer:** Evaluates asset class allocations (Equities, Crypto, ETFs, Bonds, Cash), detects largest-holding concentration risks, and calculates a weighted Diversification Score (0–100).
+- **AI Financial Assistant:** Generates personalized, educational financial wellness insights based on real user data (spending habits, risk profile) via OpenAI's LLM with deterministic rule-based fallbacks.
+- **Full-Stack Relational Architecture:** Dockerized FastAPI backend with PostgreSQL, SQLAlchemy ORM, Alembic schema migrations, and comprehensive Pytest test suites.
+- **Secure Authentication:** JWT-based stateless authentication with `bcrypt` password hashing and protected endpoints.
 
 ---
 
@@ -82,17 +81,17 @@ graph TD
     
     subapi_finance[Finance Service]
     subapi_portfolio[Portfolio Service]
-    subapi_trading[Matching Engine]
+    subapi_scoring[Health Scoring Engine]
     subapi_ai[AI Assistant]
 
     API --> subapi_finance
     API --> subapi_portfolio
-    API --> subapi_trading
+    API --> subapi_scoring
     API --> subapi_ai
 
     subapi_finance --> DB[(PostgreSQL)]
     subapi_portfolio --> DB
-    subapi_trading --> DB
+    subapi_scoring --> DB
     
     subapi_ai --> LLM{OpenAI API}
     subapi_ai -.Fallback.-> Rules[Rule-Based Engine]
@@ -223,8 +222,8 @@ Deploy the Next.js UI using Vercel (easiest for Next.js):
 
 ## What I Learned
 
-- **System Architecture:** How to decouple financial logic (matching engines, risk calculators) from standard CRUD API routes.
-- **Algorithm Design:** Implementing a deterministic Price-Time priority queue for an order book supporting partial fills.
+- **System Architecture:** How to decouple domain-specific financial calculations (portfolio diversification models, health score algorithms) from standard CRUD routes.
+- **Algorithm Design:** Formulating multi-asset weighted risk scores and non-linear concentration penalty algorithms to quantify portfolio diversification accurately.
 - **Resilience:** Designing a fallback mechanism for AI integrations to ensure the platform remains stable if the LLM API is unavailable.
 - **Frontend State:** Managing complex async data fetching streams (using `Promise.all`) in React to populate heavily analytical dashboard components without layout shifting.
 
@@ -233,13 +232,12 @@ Deploy the Next.js UI using Vercel (easiest for Next.js):
 ## Architectural Roadmap and Recent Enhancements
 
 ### Recent Optimizations (Implemented)
-- **Batch Commits in Trading Engine:** Upgraded the limit order matching engine to execute batch commits outside the core `while` loop, reducing database transaction latency by over 80% during high-volume cascade matches.
 - **High-Performance Database Indexing:** Implemented B-Tree indexes on foreign keys (`user_id`, `asset_id`) and highly-queried categorical columns to ensure O(1) lookup performance and prevent full-table scans.
+- **Aggregated Analytics Caching:** Optimized category breakdown and monthly summary queries using SQLAlchemy aggregate functions, cutting query execution times significantly on high-volume user histories.
 
 ### Future Roadmap
-- **Real-Time WebSockets:** Migrate the Trading Simulator's order book from client-side polling to a WebSocket-driven sub-millisecond push architecture.
-- **Asynchronous Worker Queues:** Offload the synchronous limit order matching engine to a background worker (e.g., Celery/Redis) to prevent HTTP request blocking during massive order influxes.
+- **Real-Time WebSockets:** Implement live WebSocket feeds for instant portfolio value recalculations upon market quote updates.
 - **Next.js Server Actions:** Migrate from standard React API polling to Next.js Server Actions for zero-JS-bundle data mutations.
 - **Advanced Auth Security:** Transition JWT storage from `localStorage` to strict `HttpOnly` cookies to mitigate XSS vulnerabilities.
 - **OAuth2 Authentication:** Add Google/GitHub authentication flows for seamless onboarding.
-- **Advanced Charting:** Introduce advanced charting libraries (e.g., TradingView Lightweight Charts) for interactive candlestick data.
+- **Advanced Charting:** Introduce advanced charting libraries (e.g., TradingView Lightweight Charts) for interactive asset performance comparisons.
