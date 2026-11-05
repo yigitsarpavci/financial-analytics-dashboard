@@ -2,7 +2,7 @@
 
 [![Backend Pytest](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/backend-pytest.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/backend-pytest.yml)
 [![Frontend Next.js Build](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/frontend-build.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/frontend-build.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 An educational, full-stack financial technology application that integrates personal finance tracking, portfolio risk analysis, algorithmic financial health scoring, and an AI-powered financial assistant.
 
@@ -241,3 +241,21 @@ Deploy the Next.js UI using Vercel (easiest for Next.js):
 - **Advanced Auth Security:** Transition JWT storage from `localStorage` to strict `HttpOnly` cookies to mitigate XSS vulnerabilities.
 - **OAuth2 Authentication:** Add Google/GitHub authentication flows for seamless onboarding.
 - **Advanced Charting:** Introduce advanced charting libraries (e.g., TradingView Lightweight Charts) for interactive asset performance comparisons.
+
+---
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+## Author
+
+**Yiğit Sarp Avcı**  
+Computer Engineering Student @ Boğaziçi University  
+[GitHub Profile](https://github.com/yigitsarpavci) · [LinkedIn](https://www.linkedin.com/in/yigitsarpavci)
+
+---
+
+*Developed by Yiğit Sarp Avcı*

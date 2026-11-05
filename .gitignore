@@ -6,3 +6,6 @@ node_modules/
 
 # Build artifacts
 *.tsbuildinfo
+
+# Local archive docs
+docs/
