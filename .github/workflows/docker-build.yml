@@ -16,3 +16,6 @@ jobs:
     steps:
       - uses: actions/checkout@v7
       - run: docker compose build
+      - name: Smoke test - the backend image can import the application
+        run: |
+          docker compose run --rm --no-deps -v /tmp/nothing:/tmp/nothing backend python -c "import app.main; print('backend import ok')"
