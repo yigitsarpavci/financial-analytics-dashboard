@@ -17,6 +17,17 @@ class Settings(BaseSettings):
     class Config:
         env_file = ".env"
 
+    @property
+    def sqlalchemy_database_url(self) -> str:
+        """SQLAlchemy 2.1 defaults `postgresql://` to psycopg3; this project ships psycopg2, so pin the driver."""
+        url = self.DATABASE_URL
+        if url.startswith("postgres://"):
+            url = "postgresql://" + url[len("postgres://"):]
+        if url.startswith("postgresql://"):
+            url = "postgresql+psycopg2://" + url[len("postgresql://"):]
+        return url
+
+
 settings = Settings()
 
 if settings.ENVIRONMENT.lower() == "production" and settings.SECRET_KEY == "supersecretkey":
