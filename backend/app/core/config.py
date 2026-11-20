@@ -3,7 +3,8 @@ from pydantic_settings import BaseSettings
 class Settings(BaseSettings):
     PROJECT_NAME: str = "FinTech Intelligence Platform"
     DATABASE_URL: str = "postgresql://postgres:postgres@db:5432/fintech"
-    SECRET_KEY: str = "supersecretkey"  # In production, this should be set via env var
+    ENVIRONMENT: str = "development"
+    SECRET_KEY: str = "supersecretkey"  # development default only; production refuses to start with it
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 1440 # 1 day
 
@@ -17,3 +18,6 @@ class Settings(BaseSettings):
         env_file = ".env"
 
 settings = Settings()
+
+if settings.ENVIRONMENT.lower() == "production" and settings.SECRET_KEY == "supersecretkey":
+    raise RuntimeError("SECRET_KEY must be set to a strong random value when ENVIRONMENT=production")
