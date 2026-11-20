@@ -3,6 +3,7 @@
 [![Security: CodeQL | Dependabot](https://img.shields.io/badge/Security-CodeQL%20%7C%20Dependabot%20%7C%20Secret%20scanning-success?logo=github)](https://github.com/yigitsarpavci/financial-analytics-dashboard/security)
 [![Backend Pytest](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/backend-pytest.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/backend-pytest.yml)
 [![Frontend Next.js Build](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/frontend-build.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/frontend-build.yml)
+[![Docker Build](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/docker-build.yml/badge.svg)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/docker-build.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 An educational, full-stack financial technology application that integrates personal finance tracking, portfolio risk analysis, algorithmic financial health scoring, and an AI-powered financial assistant.
