@@ -8,4 +8,5 @@ node_modules/
 *.tsbuildinfo
 
 # Local archive docs
-docs/
+docs/*
+!docs/screenshots/
