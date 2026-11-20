@@ -48,7 +48,7 @@ export function CategoryPieChart({ data }: { data: any[] }) {
         <RechartsTooltip 
           contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px' }}
           itemStyle={{ color: '#f8fafc' }}
-          formatter={(value: number) => [`$${value.toFixed(2)}`, 'Amount']}
+          formatter={(value) => [`$${Number(value ?? 0).toFixed(2)}`, 'Amount']}
         />
         <Legend wrapperStyle={{ fontSize: '12px' }} />
       </PieChart>
@@ -71,7 +71,7 @@ export function IncomeExpenseBarChart({ income, expense }: { income: number, exp
         <RechartsTooltip 
           contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px' }}
           cursor={{ fill: '#1e293b' }}
-          formatter={(value: number) => [`$${value.toFixed(2)}`, 'Amount']}
+          formatter={(value) => [`$${Number(value ?? 0).toFixed(2)}`, 'Amount']}
         />
         <Bar dataKey="amount" radius={[4, 4, 0, 0]} barSize={60}>
           {data.map((entry, index) => (
