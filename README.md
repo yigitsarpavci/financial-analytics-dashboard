@@ -13,6 +13,15 @@ An educational, full-stack financial technology application that integrates pers
 
 ---
 
+## Quick Start
+
+```bash
+docker compose up --build
+# UI: http://localhost:3000   API docs: http://localhost:8000/docs
+```
+
+---
+
 ## Table of Contents
 - [Problem Statement](#problem-statement)
 - [Key Features](#key-features)
