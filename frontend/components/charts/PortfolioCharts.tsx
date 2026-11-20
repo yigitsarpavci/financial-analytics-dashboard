@@ -32,7 +32,7 @@ export function AllocationDonutChart({ data }: { data: Record<string, number> })
         <RechartsTooltip 
           contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #1e293b', borderRadius: '8px' }}
           itemStyle={{ color: '#f8fafc' }}
-          formatter={(value: number) => [`${value.toFixed(1)}%`, 'Allocation']}
+          formatter={(value) => [`${Number(value ?? 0).toFixed(1)}%`, 'Allocation']}
         />
         <Legend wrapperStyle={{ fontSize: '12px', paddingTop: '20px' }} />
       </PieChart>
