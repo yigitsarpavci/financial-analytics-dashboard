@@ -58,7 +58,7 @@ In modern personal finance and wealth management, data is often scattered across
 ## Tech Stack
 
 ### Frontend
-- **Framework:** Next.js 14 (App Router), React 18
+- **Framework:** Next.js 16 (App Router), React 19, Tailwind CSS 4
 - **Styling:** Tailwind CSS (Glassmorphism aesthetics)
 - **Data Visualization:** Recharts
 - **Icons:** Lucide-React
