@@ -10,3 +10,5 @@ node_modules/
 # Local archive docs
 docs/*
 !docs/screenshots/
+
+.coverage
