@@ -131,7 +131,7 @@ export default function PortfolioPage() {
                         <tr key={h.id} className="border-b border-slate-800/50 hover:bg-slate-800/20">
                           <td className="p-4 font-semibold text-indigo-400">{h.ticker_symbol}</td>
                           <td className="p-4"><span className="text-xs bg-slate-800 px-2 py-1 rounded">{h.asset_class}</span></td>
-                          <td className="p-4 text-right text-slate-300">{h.quantity}</td>
+                          <td className="p-4 text-right text-slate-300">{h.quantity.toLocaleString(undefined, { maximumFractionDigits: 4 })}</td>
                           <td className="p-4 text-right text-slate-300">${h.average_buy_price.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                           <td className="p-4 text-right font-medium text-slate-200">${val.toLocaleString(undefined, {minimumFractionDigits: 2})}</td>
                           <td className="p-4 text-center">

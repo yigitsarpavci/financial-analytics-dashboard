@@ -18,7 +18,23 @@ An educational, full-stack financial technology application that integrates pers
 ```bash
 docker compose up --build
 # UI: http://localhost:3000   API docs: http://localhost:8000/docs
+docker compose exec backend python app/db/seed.py   # demo data; sign in as test0@example.com / password123
 ```
+
+---
+
+## Screenshots
+
+Captured with the seeded demo data (50 users, 2,500+ transactions).
+
+![Tour](docs/screenshots/tour.gif)
+
+| | |
+|---|---|
+| ![Overview](docs/screenshots/dashboard.jpg) | ![Personal finance: cash flow, expense breakdown, health score](docs/screenshots/finance.jpg) |
+| *Overview* | *Personal finance: cash flow, expense breakdown, health score* |
+| ![Portfolio risk analyzer: allocation, diversification, risk score](docs/screenshots/portfolio.jpg) | ![Trading simulator with limit-order matching](docs/screenshots/trading.jpg) |
+| *Portfolio risk analyzer: allocation, diversification, risk score* | *Trading simulator with limit-order matching* |
 
 ---
 
