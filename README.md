@@ -1,6 +1,7 @@
 # Financial Analytics Dashboard: Personal Finance & Portfolio Risk Platform
 
 [![Security: CodeQL | Dependabot](https://img.shields.io/badge/Security-CodeQL%20%7C%20Dependabot%20%7C%20Secret%20scanning-success?logo=github)](https://github.com/yigitsarpavci/financial-analytics-dashboard/security)
+[![Coverage](https://img.shields.io/badge/coverage-71%25%20services-yellowgreen)](#devops-and-testing)
 [![Backend Pytest](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/backend-pytest.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/backend-pytest.yml)
 [![Frontend Next.js Build](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/frontend-build.yml/badge.svg?branch=main)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/frontend-build.yml)
 [![Docker Build](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/docker-build.yml/badge.svg)](https://github.com/yigitsarpavci/financial-analytics-dashboard/actions/workflows/docker-build.yml)
@@ -71,7 +72,7 @@ In modern personal finance and wealth management, data is often scattered across
 
 ### DevOps and Testing
 - **Containerization:** Docker and Docker Compose
-- **Testing:** Pytest (100% backend unit test coverage for core engines)
+- **Testing:** Pytest (21 tests; 71% line coverage of the service layer, enforced at 70% in CI)
 
 ---
 
