@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { MetricCard } from "@/components/ui/MetricCard";
@@ -11,6 +11,8 @@ import { CashFlowLineChart, CategoryPieChart, IncomeExpenseBarChart } from "@/co
 import { AddTransactionModal } from "@/components/AddTransactionModal";
 import { Plus, HeartPulse, PiggyBank, Receipt, ArrowRightLeft } from "lucide-react";
 import { getMonthlySummary, getCategoryBreakdown, getCashFlow, getHealthScore, getTransactions } from "@/lib/api";
+import { getErrorMessage, isUnauthorized } from "@/lib/errors";
+import type { CashFlowPoint, CategoryBreakdownItem, HealthScore, MonthlySummary, Transaction } from "@/types/api";
 
 export default function FinanceDashboard() {
   const router = useRouter();
@@ -18,41 +20,38 @@ export default function FinanceDashboard() {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [summary, setSummary] = useState<any>(null);
-  const [categories, setCategories] = useState<any[]>([]);
-  const [cashFlow, setCashFlow] = useState<any[]>([]);
-  const [health, setHealth] = useState<any>(null);
-  const [recentTx, setRecentTx] = useState<any[]>([]);
+  const [summary, setSummary] = useState<MonthlySummary | null>(null);
+  const [categories, setCategories] = useState<CategoryBreakdownItem[]>([]);
+  const [cashFlow, setCashFlow] = useState<CashFlowPoint[]>([]);
+  const [health, setHealth] = useState<HealthScore | null>(null);
+  const [recentTx, setRecentTx] = useState<Transaction[]>([]);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [sumRes, catRes, cfRes, healthRes, txRes] = await Promise.all([
-        getMonthlySummary(),
-        getCategoryBreakdown(),
-        getCashFlow(),
-        getHealthScore(),
-        getTransactions()
-      ]);
-      setSummary(sumRes);
-      setCategories(catRes);
-      setCashFlow(cfRes);
-      setHealth(healthRes);
-      setRecentTx(txRes.slice(0, 5)); // Just top 5
-    } catch (err: any) {
-      if (err.message === "Unauthorized") {
-        router.push("/login");
-      } else {
-        setError(err.message || "Failed to load dashboard data");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   useEffect(() => {
-    fetchData();
-  }, [router]);
+    let active = true;
+    Promise.all([getMonthlySummary(), getCategoryBreakdown(), getCashFlow(), getHealthScore(), getTransactions()])
+      .then(([sumRes, catRes, cfRes, healthRes, txRes]) => {
+        if (!active) return;
+        setSummary(sumRes);
+        setCategories(catRes);
+        setCashFlow(cfRes);
+        setHealth(healthRes);
+        setRecentTx(txRes.slice(0, 5)); // Just top 5
+      })
+      .catch((err) => {
+        if (!active) return;
+        if (isUnauthorized(err)) router.push("/login");
+        else setError(getErrorMessage(err, "Failed to load dashboard data"));
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [router, refreshKey]);
 
   if (loading && !summary) return <LoadingState title="Analyzing your finances..." />;
   if (error) return <ErrorState title="Dashboard Error" description={error} />;
@@ -80,7 +79,7 @@ export default function FinanceDashboard() {
           value={`${health?.score}/100`} 
           subtitle={health?.status}
           icon={HeartPulse}
-          trend={{ value: 0, isPositive: health?.score >= 60 }} // Mock trend just for color
+          trend={{ value: 0, isPositive: (health?.score ?? 0) >= 60 }} // Mock trend just for color
         />
         <MetricCard 
           title="Monthly Income" 
@@ -157,7 +156,7 @@ export default function FinanceDashboard() {
       <AddTransactionModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSuccess={fetchData} 
+        onSuccess={refresh} 
       />
     </div>
   );

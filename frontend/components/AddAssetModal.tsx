@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { addPortfolioAsset } from "@/lib/api";
+import { getErrorMessage } from "@/lib/errors";
 
 interface Props {
   isOpen: boolean;
@@ -41,8 +42,8 @@ export function AddAssetModal({ isOpen, onClose, onSuccess }: Props) {
       });
       onSuccess();
       onClose();
-    } catch (err: any) {
-      setError(err.message || "Failed to add asset");
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to add asset"));
     } finally {
       setLoading(false);
     }

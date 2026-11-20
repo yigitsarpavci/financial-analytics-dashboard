@@ -1,10 +1,11 @@
 "use client";
 
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ResponsiveContainer, BarChart, Bar, Legend, PieChart, Pie, Cell } from 'recharts';
+import type { CashFlowPoint, CategoryBreakdownItem } from "@/types/api";
 
 const COLORS = ['#818cf8', '#34d399', '#fbbf24', '#f87171', '#a78bfa', '#60a5fa', '#f472b6'];
 
-export function CashFlowLineChart({ data }: { data: any[] }) {
+export function CashFlowLineChart({ data }: { data: CashFlowPoint[] }) {
   if (!data || data.length === 0) return <div className="h-full flex items-center justify-center text-slate-500">No data available</div>;
 
   return (
@@ -25,7 +26,7 @@ export function CashFlowLineChart({ data }: { data: any[] }) {
   );
 }
 
-export function CategoryPieChart({ data }: { data: any[] }) {
+export function CategoryPieChart({ data }: { data: CategoryBreakdownItem[] }) {
   if (!data || data.length === 0) return <div className="h-full flex items-center justify-center text-slate-500">No data available</div>;
 
   return (

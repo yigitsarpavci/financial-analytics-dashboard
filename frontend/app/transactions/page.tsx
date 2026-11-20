@@ -7,12 +7,14 @@ import { LoadingState, ErrorState } from "@/components/ui/States";
 import { Card } from "@/components/ui/Card";
 import { getTransactions } from "@/lib/api";
 import { Search, Filter, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { isUnauthorized } from "@/lib/errors";
+import type { Transaction } from "@/types/api";
 
 export default function TransactionsPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [transactions, setTransactions] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   
   // Filtering
   const [filterType, setFilterType] = useState<"ALL" | "INCOME" | "EXPENSE">("ALL");
@@ -23,8 +25,8 @@ export default function TransactionsPage() {
       try {
         const data = await getTransactions();
         setTransactions(data);
-      } catch (err: any) {
-        if (err.message === "Unauthorized") {
+      } catch (err) {
+        if (isUnauthorized(err)) {
           router.push("/login");
         } else {
           setError("Failed to fetch transactions");

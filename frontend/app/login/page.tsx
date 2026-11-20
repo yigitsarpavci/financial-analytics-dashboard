@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
+import { getErrorMessage } from "@/lib/errors";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -35,8 +36,8 @@ export default function LoginPage() {
 
       localStorage.setItem('auth_token', data.access_token);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -94,7 +95,7 @@ export default function LoginPage() {
 
         <div className="mt-6 text-center">
           <p className="text-sm text-slate-400">
-            Don't have an account?{' '}
+            Don&apos;t have an account?{' '}
             <Link href="/register" className="text-emerald-400 hover:text-emerald-300 font-medium">
               Create one
             </Link>

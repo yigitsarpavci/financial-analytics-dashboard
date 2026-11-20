@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { MetricCard } from "@/components/ui/MetricCard";
@@ -11,6 +11,8 @@ import { AllocationDonutChart, RiskGauge } from "@/components/charts/PortfolioCh
 import { AddAssetModal } from "@/components/AddAssetModal";
 import { Plus, ShieldAlert, Crosshair, Network, TrendingUp, Trash2 } from "lucide-react";
 import { getPortfolio, getPortfolioRiskAnalysis, deletePortfolioAsset } from "@/lib/api";
+import { getErrorMessage, isUnauthorized } from "@/lib/errors";
+import type { PortfolioHolding, RiskAnalysis } from "@/types/api";
 
 export default function PortfolioPage() {
   const router = useRouter();
@@ -18,48 +20,45 @@ export default function PortfolioPage() {
   const [error, setError] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [holdings, setHoldings] = useState<any[]>([]);
-  const [analysis, setAnalysis] = useState<any>(null);
+  const [holdings, setHoldings] = useState<PortfolioHolding[]>([]);
+  const [analysis, setAnalysis] = useState<RiskAnalysis | null>(null);
 
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const [holdingsRes, analysisRes] = await Promise.all([
-        getPortfolio(),
-        getPortfolioRiskAnalysis()
-      ]);
-      setHoldings(holdingsRes);
-      setAnalysis(analysisRes);
-    } catch (err: any) {
-      if (err.message === "Unauthorized") {
-        router.push("/login");
-      } else {
-        setError(err.message || "Failed to load portfolio data");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   useEffect(() => {
-    fetchData();
-  }, [router]);
+    let active = true;
+    Promise.all([getPortfolio(), getPortfolioRiskAnalysis()])
+      .then(([holdingsRes, analysisRes]) => {
+        if (!active) return;
+        setHoldings(holdingsRes);
+        setAnalysis(analysisRes);
+      })
+      .catch((err) => {
+        if (!active) return;
+        if (isUnauthorized(err)) router.push("/login");
+        else setError(getErrorMessage(err, "Failed to load portfolio data"));
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [router, refreshKey]);
 
   const handleDelete = async (id: number) => {
     if (!confirm("Are you sure you want to remove this asset?")) return;
     try {
       await deletePortfolioAsset(id);
-      fetchData();
+      refresh();
     } catch (err) {
-      alert("Failed to delete asset");
+      alert(getErrorMessage(err, "Failed to delete asset"));
     }
   };
 
   if (loading && !analysis) return <LoadingState title="Analyzing portfolio risk..." />;
   if (error) return <ErrorState title="Portfolio Error" description={error} />;
-
-  const isAggressive = analysis?.risk_profile === "Aggressive";
-  const isConservative = analysis?.risk_profile === "Conservative";
 
   return (
     <div className="animate-in fade-in duration-500 pb-12">
@@ -91,9 +90,9 @@ export default function PortfolioPage() {
         />
         <MetricCard 
           title="Largest Concentration" 
-          value={`${analysis?.largest_holding_concentration.toFixed(1)}%`} 
+          value={`${analysis?.largest_holding_concentration?.toFixed(1)}%`} 
           icon={Crosshair}
-          trend={{ value: 0, isPositive: analysis?.largest_holding_concentration < 40 }} // Visual mock
+          trend={{ value: 0, isPositive: (analysis?.largest_holding_concentration ?? 100) < 40 }} // Visual mock
         />
         <MetricCard 
           title="Total Holdings" 
@@ -173,7 +172,7 @@ export default function PortfolioPage() {
       <AddAssetModal 
         isOpen={isModalOpen} 
         onClose={() => setIsModalOpen(false)} 
-        onSuccess={fetchData} 
+        onSuccess={refresh} 
       />
     </div>
   );

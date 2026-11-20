@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Card } from '@/components/ui/Card';
+import { getErrorMessage } from "@/lib/errors";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -42,8 +43,8 @@ export default function RegisterPage() {
 
       localStorage.setItem('auth_token', loginData.access_token);
       router.push('/dashboard');
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

@@ -8,11 +8,13 @@ import { Card } from "@/components/ui/Card";
 import { LoadingState, ErrorState } from "@/components/ui/States";
 import { Wallet, TrendingUp, CreditCard, Activity } from 'lucide-react';
 import { getTransactions, getPortfolio } from "@/lib/api";
+import { isUnauthorized } from "@/lib/errors";
+import type { PortfolioHolding, Transaction } from "@/types/api";
 
 export default function Dashboard() {
   const router = useRouter();
-  const [transactions, setTransactions] = useState<any[]>([]);
-  const [portfolio, setPortfolio] = useState<any[]>([]);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [portfolio, setPortfolio] = useState<PortfolioHolding[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,8 +33,8 @@ export default function Dashboard() {
         ]);
         setTransactions(txData);
         setPortfolio(pfData);
-      } catch (err: any) {
-        if (err.message === "Unauthorized") {
+      } catch (err) {
+        if (isUnauthorized(err)) {
           localStorage.removeItem("auth_token");
           router.push("/login");
         } else {
@@ -48,11 +50,11 @@ export default function Dashboard() {
   if (loading) return <LoadingState title="Loading dashboard..." />;
   if (error) return <ErrorState title="Dashboard Error" description={error} />;
 
-  const totalIncome = transactions.filter((t: any) => t.type === 'INCOME').reduce((acc: number, t: any) => acc + t.amount, 0);
-  const totalExpense = transactions.filter((t: any) => t.type === 'EXPENSE').reduce((acc: number, t: any) => acc + t.amount, 0);
+  const totalIncome = transactions.filter((t) => t.type === 'INCOME').reduce((acc: number, t) => acc + t.amount, 0);
+  const totalExpense = transactions.filter((t) => t.type === 'EXPENSE').reduce((acc: number, t) => acc + t.amount, 0);
   const cashBalance = totalIncome - totalExpense;
 
-  const portfolioValue = portfolio.reduce((acc: number, item: any) => acc + (item.quantity * item.average_buy_price), 0);
+  const portfolioValue = portfolio.reduce((acc: number, item) => acc + (item.quantity * item.average_buy_price), 0);
   const totalNetWorth = cashBalance + portfolioValue;
 
   return (
@@ -102,7 +104,7 @@ export default function Dashboard() {
              <TrendingUp className="w-8 h-8 text-emerald-400" />
            </div>
            <h3 className="text-xl font-bold text-slate-100 mb-2">Analyze Risk</h3>
-           <p className="text-slate-400 mb-6">Deep dive into your portfolio's risk profile and diversification score.</p>
+           <p className="text-slate-400 mb-6">Deep dive into your portfolio&apos;s risk profile and diversification score.</p>
            <button onClick={() => router.push('/portfolio')} className="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-white rounded-lg font-medium transition-colors shadow-md shadow-emerald-500/20">
              View Analysis
            </button>

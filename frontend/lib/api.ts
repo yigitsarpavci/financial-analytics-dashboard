@@ -1,4 +1,22 @@
-export const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
+import type {
+  AIInsight,
+  CashFlowPoint,
+  CategoryBreakdownItem,
+  HealthScore,
+  MonthlySummary,
+  Order,
+  OrderBook,
+  OrderInput,
+  PortfolioAssetInput,
+  PortfolioHolding,
+  RiskAnalysis,
+  Trade,
+  Transaction,
+  TransactionInput,
+  User,
+} from "@/types/api";
+
+export const fetchAPI = async <T = unknown>(endpoint: string, options: RequestInit = {}): Promise<T> => {
   const defaultOptions: RequestInit = {
     headers: {
       'Content-Type': 'application/json',
@@ -27,21 +45,21 @@ export const fetchAPI = async (endpoint: string, options: RequestInit = {}) => {
 };
 
 export const getTransactions = async () => {
-  return fetchAPI(`/transactions/`);
+  return fetchAPI<Transaction[]>(`/transactions/`);
 };
 
-export const getPortfolio = async () => fetchAPI(`/portfolio/`);
-export const getPortfolioRiskAnalysis = async () => fetchAPI(`/portfolio/risk-analysis`);
+export const getPortfolio = async () => fetchAPI<PortfolioHolding[]>(`/portfolio/`);
+export const getPortfolioRiskAnalysis = async () => fetchAPI<RiskAnalysis>(`/portfolio/risk-analysis`);
 
-export const addPortfolioAsset = async (data: any) => {
-  return fetchAPI(`/portfolio/assets`, {
+export const addPortfolioAsset = async (data: PortfolioAssetInput) => {
+  return fetchAPI<PortfolioHolding>(`/portfolio/assets`, {
     method: 'POST',
     body: JSON.stringify(data)
   });
 };
 
-export const updatePortfolioAsset = async (id: number, data: any) => {
-  return fetchAPI(`/portfolio/assets/${id}`, {
+export const updatePortfolioAsset = async (id: number, data: Partial<PortfolioAssetInput>) => {
+  return fetchAPI<PortfolioHolding>(`/portfolio/assets/${id}`, {
     method: 'PUT',
     body: JSON.stringify(data)
   });
@@ -53,7 +71,7 @@ export const deletePortfolioAsset = async (id: number) => {
   });
 };
 
-export const getPreviousInsights = async () => fetchAPI(`/ai/insights`);
+export const getPreviousInsights = async () => fetchAPI<AIInsight[]>(`/ai/insights`);
 
 export const generateFinancialSummary = async () => {
   return fetchAPI(`/ai/financial-summary`, { method: 'POST' });
@@ -67,27 +85,27 @@ export const generateMonthlyReport = async () => {
   return fetchAPI(`/ai/monthly-report`, { method: 'POST' });
 };
 
-export const getCurrentUser = async () => fetchAPI('/auth/me');
+export const getCurrentUser = async () => fetchAPI<User>('/auth/me');
 
-export const getMonthlySummary = async () => fetchAPI('/finance/monthly-summary');
-export const getCategoryBreakdown = async () => fetchAPI('/finance/category-breakdown');
-export const getCashFlow = async () => fetchAPI('/finance/cash-flow');
-export const getHealthScore = async () => fetchAPI('/finance/financial-health-score');
+export const getMonthlySummary = async () => fetchAPI<MonthlySummary>('/finance/monthly-summary');
+export const getCategoryBreakdown = async () => fetchAPI<CategoryBreakdownItem[]>('/finance/category-breakdown');
+export const getCashFlow = async () => fetchAPI<CashFlowPoint[]>('/finance/cash-flow');
+export const getHealthScore = async () => fetchAPI<HealthScore>('/finance/financial-health-score');
 
-export const createTransaction = async (data: any) => {
-  return fetchAPI('/transactions/', {
+export const createTransaction = async (data: TransactionInput) => {
+  return fetchAPI<Transaction>('/transactions/', {
     method: 'POST',
     body: JSON.stringify(data)
   });
 };
 
-export const createOrder = async (data: any) => {
-  return fetchAPI('/trading/orders', {
+export const createOrder = async (data: OrderInput) => {
+  return fetchAPI<Order>('/trading/orders', {
     method: 'POST',
     body: JSON.stringify(data)
   });
 };
 
-export const getUserOrders = async () => fetchAPI('/trading/orders');
-export const getOrderBook = async (assetId: number = 1) => fetchAPI(`/trading/order-book?asset_id=${assetId}`);
-export const getUserTrades = async () => fetchAPI('/trading/trades');
+export const getUserOrders = async () => fetchAPI<Order[]>('/trading/orders');
+export const getOrderBook = async (assetId: number = 1) => fetchAPI<OrderBook>(`/trading/order-book?asset_id=${assetId}`);
+export const getUserTrades = async () => fetchAPI<Trade[]>('/trading/trades');

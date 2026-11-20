@@ -6,17 +6,18 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { Card } from "@/components/ui/Card";
 import { User, Mail, Shield, Bell, Key, LogOut } from "lucide-react";
 import { getCurrentUser } from "@/lib/api";
+import type { User as AppUser } from "@/types/api";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
         const data = await getCurrentUser();
         setUser(data);
-      } catch (err) {
+      } catch {
         router.push("/login");
       }
     };
@@ -25,7 +26,7 @@ export default function SettingsPage() {
 
   const handleLogout = () => {
     localStorage.removeItem("auth_token");
-    window.location.href = "/login";
+    router.push("/login");
   };
 
   return (

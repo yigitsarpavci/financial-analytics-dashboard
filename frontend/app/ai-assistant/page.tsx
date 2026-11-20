@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LoadingState, ErrorState } from "@/components/ui/States";
@@ -12,33 +12,38 @@ import {
   generatePortfolioRiskSummary, 
   generateMonthlyReport 
 } from "@/lib/api";
+import { getErrorMessage, isUnauthorized } from "@/lib/errors";
+import type { AIInsight } from "@/types/api";
 
 export default function AIAssistantPage() {
   const router = useRouter();
-  const [insights, setInsights] = useState<any[]>([]);
+  const [insights, setInsights] = useState<AIInsight[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   
   const [generatingStatus, setGeneratingStatus] = useState<string | null>(null);
 
-  const fetchInsights = async () => {
-    try {
-      const data = await getPreviousInsights();
-      setInsights(data);
-    } catch (err: any) {
-      if (err.message === "Unauthorized") {
-        router.push("/login");
-      } else {
-        setError("Failed to fetch past insights.");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   useEffect(() => {
-    fetchInsights();
-  }, [router]);
+    let active = true;
+    getPreviousInsights()
+      .then((data) => {
+        if (active) setInsights(data);
+      })
+      .catch((err) => {
+        if (!active) return;
+        if (isUnauthorized(err)) router.push("/login");
+        else setError("Failed to fetch past insights.");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [router, refreshKey]);
 
   const handleGenerate = async (type: 'financial' | 'portfolio' | 'monthly') => {
     setGeneratingStatus(type);
@@ -49,9 +54,9 @@ export default function AIAssistantPage() {
       else if (type === 'monthly') await generateMonthlyReport();
       
       // Refresh the list after generation
-      await fetchInsights();
-    } catch (err: any) {
-      setError(`Failed to generate ${type} insight: ` + err.message);
+      refresh();
+    } catch (err) {
+      setError(`Failed to generate ${type} insight: ` + getErrorMessage(err));
     } finally {
       setGeneratingStatus(null);
     }
@@ -153,7 +158,7 @@ export default function AIAssistantPage() {
               <div className="absolute top-0 left-0 w-1 h-full bg-slate-700 group-hover:bg-indigo-500 transition-colors" />
               <div className="flex justify-between items-start mb-3">
                 <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-800 text-slate-300 border border-slate-700">
-                  {insight.prompt.includes('fallback') ? 'Rule-Based Engine' : 'AI Engine'} • {insight.prompt.split(' ')[0]}
+                  {(insight.prompt ?? '').includes('fallback') ? 'Rule-Based Engine' : 'AI Engine'} • {(insight.prompt ?? '').split(' ')[0]}
                 </span>
                 <span className="text-xs text-slate-500">
                   {new Date(insight.generated_at).toLocaleString()}

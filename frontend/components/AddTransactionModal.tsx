@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { createTransaction } from "@/lib/api";
+import { getErrorMessage } from "@/lib/errors";
+import type { TransactionType } from "@/types/api";
 
 interface Props {
   isOpen: boolean;
@@ -12,7 +14,7 @@ interface Props {
 
 export function AddTransactionModal({ isOpen, onClose, onSuccess }: Props) {
   const [amount, setAmount] = useState("");
-  const [type, setType] = useState("EXPENSE");
+  const [type, setType] = useState<TransactionType>("EXPENSE");
   const [category, setCategory] = useState("Groceries");
   const [description, setDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,8 +37,8 @@ export function AddTransactionModal({ isOpen, onClose, onSuccess }: Props) {
       });
       onSuccess();
       onClose();
-    } catch (err: any) {
-      setError(err.message || "Failed to add transaction");
+    } catch (err) {
+      setError(getErrorMessage(err, "Failed to add transaction"));
     } finally {
       setLoading(false);
     }

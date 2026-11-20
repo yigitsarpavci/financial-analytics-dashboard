@@ -1,21 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { LoadingState, ErrorState } from "@/components/ui/States";
 import { Card } from "@/components/ui/Card";
-import { ArrowRightLeft, ActivitySquare, AlertCircle, TrendingUp, TrendingDown, BookOpen } from "lucide-react";
+import { ArrowRightLeft, ActivitySquare, TrendingUp, BookOpen } from "lucide-react";
 import { getUserOrders, getOrderBook, getUserTrades, createOrder } from "@/lib/api";
+import { getErrorMessage, isUnauthorized } from "@/lib/errors";
+import type { Order, OrderBook, Trade } from "@/types/api";
 
 export default function TradingPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [orderBook, setOrderBook] = useState<{bids: any[], asks: any[]}>({ bids: [], asks: [] });
-  const [orders, setOrders] = useState<any[]>([]);
-  const [trades, setTrades] = useState<any[]>([]);
+  const [orderBook, setOrderBook] = useState<OrderBook>({ bids: [], asks: [] });
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [trades, setTrades] = useState<Trade[]>([]);
 
   // Form state
   const [side, setSide] = useState<"BUY" | "SELL">("BUY");
@@ -26,33 +28,36 @@ export default function TradingPage() {
   // We'll hardcode assetId = 1 (e.g. BTC) for the simulator MVP
   const ASSET_ID = 1;
 
-  const fetchData = async () => {
-    try {
-      const [bookData, ordersData, tradesData] = await Promise.all([
-        getOrderBook(ASSET_ID),
-        getUserOrders(),
-        getUserTrades()
-      ]);
-      setOrderBook(bookData);
-      setOrders(ordersData);
-      setTrades(tradesData);
-    } catch (err: any) {
-      if (err.message === "Unauthorized") {
-        router.push("/login");
-      } else {
-        setError("Failed to fetch trading data");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [refreshKey, setRefreshKey] = useState(0);
+  const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
 
   useEffect(() => {
-    fetchData();
-    // In a real app we'd use WebSockets. For this MVP simulator, we can poll every 5s or just rely on manual/after-trade refresh.
-    const interval = setInterval(fetchData, 5000);
+    let active = true;
+    Promise.all([getOrderBook(ASSET_ID), getUserOrders(), getUserTrades()])
+      .then(([bookData, ordersData, tradesData]) => {
+        if (!active) return;
+        setOrderBook(bookData);
+        setOrders(ordersData);
+        setTrades(tradesData);
+      })
+      .catch((err) => {
+        if (!active) return;
+        if (isUnauthorized(err)) router.push("/login");
+        else setError("Failed to fetch trading data");
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [router, refreshKey]);
+
+  // In a real app we'd use WebSockets. For this MVP simulator, poll every 5s in addition to after-trade refreshes.
+  useEffect(() => {
+    const interval = setInterval(refresh, 5000);
     return () => clearInterval(interval);
-  }, [router]);
+  }, [refresh]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,11 +71,11 @@ export default function TradingPage() {
         quantity: parseFloat(quantity)
       });
       // Refresh immediately
-      await fetchData();
+      refresh();
       setPrice("");
       setQuantity("");
-    } catch (err: any) {
-      alert(err.message || "Failed to place order");
+    } catch (err) {
+      alert(getErrorMessage(err, "Failed to place order"));
     } finally {
       setSubmitting(false);
     }
@@ -188,7 +193,7 @@ export default function TradingPage() {
 
             {/* Asks (Sells) - Show bottom 8 */}
             <div className="flex-1 overflow-hidden flex flex-col-reverse justify-start">
-              {orderBook.asks.slice(0, 8).reverse().map((ask: any, i: number) => (
+              {orderBook.asks.slice(0, 8).reverse().map((ask, i) => (
                 <div key={`ask-${i}`} className="grid grid-cols-2 px-4 py-1.5 hover:bg-rose-500/10 cursor-pointer transition-colors group">
                   <div className="text-rose-400">{ask.price.toFixed(2)}</div>
                   <div className="text-right text-slate-300">{ask.quantity.toFixed(4)}</div>
@@ -204,7 +209,7 @@ export default function TradingPage() {
 
             {/* Bids (Buys) - Show top 8 */}
             <div className="flex-1 overflow-hidden flex flex-col justify-start">
-              {orderBook.bids.slice(0, 8).map((bid: any, i: number) => (
+              {orderBook.bids.slice(0, 8).map((bid, i) => (
                 <div key={`bid-${i}`} className="grid grid-cols-2 px-4 py-1.5 hover:bg-emerald-500/10 cursor-pointer transition-colors group">
                   <div className="text-emerald-400">{bid.price.toFixed(2)}</div>
                   <div className="text-right text-slate-300">{bid.quantity.toFixed(4)}</div>
