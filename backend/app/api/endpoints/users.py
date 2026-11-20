@@ -3,13 +3,9 @@ from sqlalchemy.orm import Session
 from app.db.session import get_db
 from app.models.all_models import User
 from app.schemas.all_schemas import UserCreate, UserRead
-import hashlib
+from app.core.security import get_password_hash
 
 router = APIRouter()
-
-# Very basic password hashing for MVP purposes (legacy, using auth.py now but kept for compatibility)
-def get_password_hash(password: str) -> str:
-    return hashlib.sha256(password.encode()).hexdigest()
 
 @router.post("/", response_model=UserRead)
 def create_user(user: UserCreate, db: Session = Depends(get_db)):
